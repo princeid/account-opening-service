@@ -1,0 +1,23 @@
+# Maven target directory
+target/
+.idea/
+*.iml
+
+# Local development files
+*.log
+*.env
+*.bak
+*.swp
+
+# Docker related files in other directories (if any)
+docker/
+
+# .git directory (source control)
+.git/
+
+# Files that are not needed in the Docker image
+README.md
+LICENSE
+
+# Temporary or backup files
+*.tmp
