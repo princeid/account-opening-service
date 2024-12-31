@@ -13,6 +13,7 @@ target/
 docker/
 
 # .git directory (source control)
+.gitignore
 .git/
 
 # Files that are not needed in the Docker image

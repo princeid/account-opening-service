@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Alexa database container
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE_SCHEMA}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - alexa-network
+    restart: always
+
+  # Application container
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: account-opening-service
+    environment:
+      SPRING_DATASOURCE_URL: ${MYSQL_DATABASE_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+    networks:
+      - alexa-network
+    restart: always
+
+networks:
+  alexa-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
