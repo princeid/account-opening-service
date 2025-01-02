@@ -21,8 +21,10 @@ services:
   # Application container
   app:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
     container_name: account-opening-service
     environment:
       SPRING_DATASOURCE_URL: ${MYSQL_DATABASE_URL}

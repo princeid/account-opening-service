@@ -5,12 +5,11 @@ target/
 
 # Local development files
 *.log
-*.env
+.env
 *.bak
 *.swp
 
 # Docker related files in other directories (if any)
-docker/
 
 # .git directory (source control)
 .gitignore

@@ -1,0 +1,223 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Account Opening Service - Customer Registration API
+  description: API for customer registration.
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+paths:
+  /account-opening/request:
+    post:
+      summary: Create a new account opening request
+      description: Creates a new account opening request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - address
+                - dateOfBirth
+              properties:
+                name:
+                  type: string
+                  example: "John Abrutzi"
+                  description: "Customer's full name"
+                address:
+                  type: object
+                  required:
+                    - street
+                    - houseNumber
+                    - postCode
+                    - city
+                  properties:
+                    street:
+                      type: string
+                      example: "Corner Street"
+                    houseNumber:
+                      type: string
+                      example: "007"
+                    postCode:
+                      type: string
+                      pattern: "^[0-9]{4} [A-Z]{2}$"
+                      example: "1234 AB"
+                    city:
+                      type: string
+                      example: "Amsterdam"
+                dateOfBirth:
+                  type: string
+                  format: date
+                  example: "1990-10-05"
+      responses:
+        201:
+          description: Account opening request created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    example: "xyz123"
+                  status:
+                    type: string
+                    example: "PENDING"
+                  message:
+                    type: string
+                    example: "Account opening request submitted. You can resume later."
+        400:
+          description: Validation failed.
+  /account-opening/request/{requestId}:
+    put:
+      summary: Update account opening request details
+      description: Updates a request with additional details.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idDocument:
+                  type: string
+                  example: "document_url_or_id"
+                accountType:
+                  type: string
+                  enum: [SAVINGS, CURRENT, INVESTMENT]
+                  example: "SAVINGS"
+                startingBalance:
+                  type: number
+                  example: 1000
+                monthlySalary:
+                  type: number
+                  example: 3000
+                email:
+                  type: string
+                  format: email
+                  example: "john.abrutzi@example.com"
+                interestedInOtherProducts:
+                  type: string
+                  enum: [Y, N]
+                  example: "Y"
+      responses:
+        200:
+          description: Account opening request successfully updated.
+  /account-opening/request/{requestId}/pause:
+    post:
+      summary: Pause account opening request
+      description: Pauses an ongoing account opening request.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Request paused successfully.
+  /account-opening/request/{requestId}/resume:
+    post:
+      summary: Resume account request
+      description: Resumes a paused account request.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Request resumed successfully.
+  /account-opening/request/{requestId}/submit:
+    post:
+      summary: Submit account request
+      description: Submits a completed account request for final processing.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account request submitted successfully.
+        400:
+          description: Failed to create account opening request due to invalid or incomplete data.
+  /api/v1/account/request/{requestId}:
+    get:
+      summary: Retrieves an account opening request by requestId
+      description: Retrieves the details of an account request by its requestId.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Account opening request retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                    example: "xyz123"
+                  name:
+                    type: string
+                    example: "John Abrutzi"
+                  address:
+                    type: object
+                    properties:
+                      street:
+                        type: string
+                        example: "Corner Street"
+                      houseNumber:
+                        type: string
+                        example: "456"
+                      postcode:
+                        type: string
+                        pattern: "^[0-9]{4} [A-Z]{2}$"
+                        example: "3524 NB"
+                      city:
+                        type: string
+                        example: "Amsterdam"
+                  dateOfBirth:
+                    type: string
+                    format: date
+                    example: "1990-10-05"
+                  idDocument:
+                    type: string
+                    example: "document_url_or_id"
+                  accountType:
+                    type: string
+                    example: "SAVINGS"
+                  startingBalance:
+                    type: number
+                    example: 1000
+                  monthlySalary:
+                    type: number
+                    example: 5500
+                  email:
+                    type: string
+                    format: email
+                    example: "john.abrutzi@example.com"
+                  interestedInOtherProducts:
+                    type: boolean
+                    example: true
+                  status:
+                    type: string
+                    example: "PENDING"
+        404:
+          description: Request not found.
