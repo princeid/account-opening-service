@@ -13,7 +13,7 @@ Account Opening Service for Alexa bank - V2.
 - Openapi - Swagger
 - Spring Security & OAUTH 2.0
 
-## How to run the API on docker
+## How to run Application on docker
 
 - Download docker engine or docker desktop https://www.docker.com/products/docker-desktop/
 - Create `.env` file in project root directory with the following db credentials
