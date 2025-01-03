@@ -41,10 +41,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccountRequest"
+              $ref: "#/components/schemas/AccountUpdateRequest"
             examples:
               default:
-                $ref: "#/components/examples/AccountRequestExample"
+                $ref: "#/components/examples/AccountUpdateRequestExample"
       responses:
         200:
           description: Account opening request created successfully.
@@ -186,6 +186,69 @@ components:
           type: string
           enum: [ Y, N ]
           example: "Y"
+    AccountUpdateRequest:
+      type: object
+      description: Customer details for account registration
+      required:
+        - id
+        - name
+        - address
+        - dateOfBirth
+      properties:
+        id:
+          type: integer
+          example: 123
+          description: id of the account to update. Not the requestId.
+        name:
+          type: string
+          example: "John Abrutzi"
+          description: "Customer's full name"
+        address:
+          type: object
+          required:
+            - street
+            - houseNumber
+            - postalCode
+            - city
+          properties:
+            street:
+              type: string
+              example: "Corner Street"
+            houseNumber:
+              type: string
+              example: "007"
+            postalCode:
+              type: string
+              pattern: "^[0-9]{4} [A-Z]{2}$"
+              example: "1234 AB"
+            city:
+              type: string
+              example: "Amsterdam"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "05-10-1990"
+        idDocument:
+          type: string
+          example: "document_url_or_id"
+        accountType:
+          type: string
+          enum: [ SAVINGS, CURRENT, INVESTMENT ]
+          example: "SAVINGS"
+        startingBalance:
+          type: number
+          example: 1000
+        monthlySalary:
+          type: number
+          example: 3000
+        email:
+          type: string
+          format: email
+          example: "john.abrutzi@example.com"
+        interestedInOtherProducts:
+          type: string
+          enum: [ Y, N ]
+          example: "Y"
     AccountRequestResponse:
       type: object
       description: Success response for account creation
@@ -209,6 +272,23 @@ components:
     AccountRequestExample:
       description: Example request for account opening
       value:
+        name: "John Brad"
+        address:
+          - street: "Bradley Avenue"
+            houseNumber: "01"
+            postalCode: "1234 AC"
+            city: "Amsterdam"
+        dateOfBirth: "05-10-1990"
+        idDocument: "http://filelocation.com/doc-01.pdf"
+        accountType: "SAVINGS"
+        startingBalance: 1000
+        monthlySalary: 3000
+        email: "john.brad@example.com"
+        interestedInOtherProducts: "Y"
+    AccountUpdateRequestExample:
+      description: Example request for account opening
+      value:
+        id: 123
         name: "John Brad"
         address:
           - street: "Bradley Avenue"
