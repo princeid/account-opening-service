@@ -1,31 +1,33 @@
 package com.alexa.account_opening_service.entity;
 
-import com.alexa.account_opening_service.model.AbstractAuditingEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.io.Serializable;
+import java.time.Instant;
 
-@Getter
-@Setter
+@Data
+@Builder(toBuilder = true, setterPrefix = "with")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @Entity
 @Table(name = "CUSTOMERACCOUNT")
-public class AccountRequest extends AbstractAuditingEntity implements Serializable {
+public class AccountRequest implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank(message = "Name cannot be blank")
     private String name;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     @NotNull
     private Address address;
@@ -36,15 +38,22 @@ public class AccountRequest extends AbstractAuditingEntity implements Serializab
     )
     private String dateOfBirth;
     private String idDocument;
-    @Pattern(regexp = "SAVINGS|CURRENT|INVESTMENT")
-    private String accountType;
+    private AccountType accountType;
     private Double startingBalance;
     private Double monthlySalary;
     @Email
     private String email;
     @Pattern(regexp = "Y|N")
     private String interestedInOtherProducts;
+    @Column(unique = true)
     private String requestId;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    @Enumerated(EnumType.STRING)
+    private State state;
     private String message;
+    @CreatedDate
+    private Instant creationDateTime;
+    @LastModifiedDate
+    private Instant updateDateTime;
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomerAccountRepository extends JpaRepository<AccountRequest, Long> {
+    AccountRequest findByRequestId(String requestId);
 }

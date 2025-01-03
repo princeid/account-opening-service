@@ -2,6 +2,7 @@ package com.alexa.account_opening_service.controller;
 
 import com.alexa.account_opening_service.dto.AccountRequestDTO;
 import com.alexa.account_opening_service.dto.AccountResponseDTO;
+import com.alexa.account_opening_service.exception.BadRequestException;
 import com.alexa.account_opening_service.service.CustomerAccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,42 +20,43 @@ public class CustomerAccountController {
 
     @PostMapping
     public ResponseEntity<AccountResponseDTO> createRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+        if (requestDto.getId() != null) {
+            throw new BadRequestException("A new request cannot already have an ID");
+        }
         AccountResponseDTO response = customerAccountService.beginAccountCreation(requestDto);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.status(200).body(response);
     }
 
-    @PutMapping("/{requestId}")
-    public ResponseEntity<AccountResponseDTO> updateRequest(@PathVariable String requestId, @Valid @RequestBody AccountRequestDTO requestDto) {
-        AccountResponseDTO response = customerAccountService.updateAccountCreation(requestId, requestDto);
+    @PutMapping
+    public ResponseEntity<AccountResponseDTO> updateRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+        if (requestDto.getId() == null) {
+            throw new BadRequestException("Id is required");
+        }
+        AccountResponseDTO response = customerAccountService.updateAccountCreation(requestDto);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{requestId}/pause")
     public ResponseEntity<AccountResponseDTO> pauseRequest(@PathVariable String requestId) {
+        if (requestId == null) {
+            throw new BadRequestException("requestId is required");
+        }
         AccountResponseDTO response = customerAccountService.pauseAccountCreation(requestId);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{requestId}/resume")
-    public ResponseEntity<AccountResponseDTO> resumeRequest(@PathVariable String requestId) {
-        AccountResponseDTO response = customerAccountService.resumeAccountCreation(requestId);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/{requestId}/submit")
-    public ResponseEntity<AccountResponseDTO> submitRequest(@PathVariable String requestId) {
-        AccountResponseDTO response = customerAccountService.submitAccountCreationRequest(requestId);
+    @PostMapping("/submit")
+    public ResponseEntity<AccountResponseDTO> submitRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+        AccountResponseDTO response = customerAccountService.submitAccountCreationRequest(requestDto);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<AccountRequestDTO> getAccountRequest(@PathVariable String requestId) {
-        AccountRequestDTO accountRequest = customerAccountService.getAccountRequestById(requestId);
+    public ResponseEntity<AccountResponseDTO> getAccountRequest(@PathVariable String requestId) {
+        if (requestId == null) {
+            throw new BadRequestException("requestId is required");
+        }
+        AccountResponseDTO accountRequest = customerAccountService.getAccountRequestById(requestId);
         return ResponseEntity.ok(accountRequest);
-    }
-
-    @GetMapping("testAPI")
-    public String testMethod() {
-        return "All good...";
     }
 }

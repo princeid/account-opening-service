@@ -1,12 +1,9 @@
 package com.alexa.account_opening_service.dto;
 
+import com.alexa.account_opening_service.entity.State;
+import com.alexa.account_opening_service.entity.Status;
 import lombok.Builder;
-import lombok.Data;
 
-@Data
 @Builder(toBuilder = true, setterPrefix = "with")
-public class AccountResponseDTO {
-    private String requestId;
-    private String status;
-    private String message;
+public record AccountResponseDTO(Long id, String requestId, Status status, State state, String message) {
 }

@@ -17,101 +17,46 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - name
-                - address
-                - dateOfBirth
-              properties:
-                name:
-                  type: string
-                  example: "John Abrutzi"
-                  description: "Customer's full name"
-                address:
-                  type: object
-                  required:
-                    - street
-                    - houseNumber
-                    - postCode
-                    - city
-                  properties:
-                    street:
-                      type: string
-                      example: "Corner Street"
-                    houseNumber:
-                      type: string
-                      example: "007"
-                    postCode:
-                      type: string
-                      pattern: "^[0-9]{4} [A-Z]{2}$"
-                      example: "1234 AB"
-                    city:
-                      type: string
-                      example: "Amsterdam"
-                dateOfBirth:
-                  type: string
-                  format: date
-                  example: "1990-10-05"
+              $ref: "#/components/schemas/AccountRequest"
+            examples:
+              default:
+                $ref: "#/components/examples/AccountRequestExample"
       responses:
-        201:
+        200:
           description: Account opening request created successfully.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  requestId:
-                    type: string
-                    example: "xyz123"
-                  status:
-                    type: string
-                    example: "PENDING"
-                  message:
-                    type: string
-                    example: "Account opening request submitted. You can resume later."
+                $ref: "#/components/schemas/AccountRequestResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/AccountRequestResponseExample"
         400:
-          description: Validation failed.
-  /account-opening/request/{requestId}:
+          description: Bad request. Validation failed.
     put:
       summary: Update account opening request details
       description: Updates a request with additional details.
-      parameters:
-        - name: requestId
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                idDocument:
-                  type: string
-                  example: "document_url_or_id"
-                accountType:
-                  type: string
-                  enum: [SAVINGS, CURRENT, INVESTMENT]
-                  example: "SAVINGS"
-                startingBalance:
-                  type: number
-                  example: 1000
-                monthlySalary:
-                  type: number
-                  example: 3000
-                email:
-                  type: string
-                  format: email
-                  example: "john.abrutzi@example.com"
-                interestedInOtherProducts:
-                  type: string
-                  enum: [Y, N]
-                  example: "Y"
+              $ref: "#/components/schemas/AccountRequest"
+            examples:
+              default:
+                $ref: "#/components/examples/AccountRequestExample"
       responses:
         200:
-          description: Account opening request successfully updated.
+          description: Account opening request created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountRequestResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/AccountRequestResponseExample"
+        400:
+          description: Bad request. Validation failed.
   /account-opening/request/{requestId}/pause:
     post:
       summary: Pause account opening request
@@ -124,35 +69,39 @@ paths:
             type: string
       responses:
         200:
-          description: Request paused successfully.
-  /account-opening/request/{requestId}/resume:
-    post:
-      summary: Resume account request
-      description: Resumes a paused account request.
-      parameters:
-        - name: requestId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Request resumed successfully.
-  /account-opening/request/{requestId}/submit:
+          description: Request paused.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountRequestResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/AccountRequestResponseExample"
+  /account-opening/request/submit:
     post:
       summary: Submit account request
       description: Submits a completed account request for final processing.
-      parameters:
-        - name: requestId
-          in: path
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountRequest"
+            examples:
+              default:
+                $ref: "#/components/examples/AccountRequestExample"
       responses:
         200:
           description: Account request submitted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountRequestResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/AccountRequestResponseExample"
         400:
-          description: Failed to create account opening request due to invalid or incomplete data.
+          description: Bad request. Validation failed.
   /api/v1/account/request/{requestId}:
     get:
       summary: Retrieves an account opening request by requestId
@@ -169,55 +118,115 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  requestId:
-                    type: string
-                    example: "xyz123"
-                  name:
-                    type: string
-                    example: "John Abrutzi"
-                  address:
-                    type: object
-                    properties:
-                      street:
-                        type: string
-                        example: "Corner Street"
-                      houseNumber:
-                        type: string
-                        example: "456"
-                      postcode:
-                        type: string
-                        pattern: "^[0-9]{4} [A-Z]{2}$"
-                        example: "3524 NB"
-                      city:
-                        type: string
-                        example: "Amsterdam"
-                  dateOfBirth:
-                    type: string
-                    format: date
-                    example: "1990-10-05"
-                  idDocument:
-                    type: string
-                    example: "document_url_or_id"
-                  accountType:
-                    type: string
-                    example: "SAVINGS"
-                  startingBalance:
-                    type: number
-                    example: 1000
-                  monthlySalary:
-                    type: number
-                    example: 5500
-                  email:
-                    type: string
-                    format: email
-                    example: "john.abrutzi@example.com"
-                  interestedInOtherProducts:
-                    type: boolean
-                    example: true
-                  status:
-                    type: string
-                    example: "PENDING"
+                $ref: "#/components/schemas/AccountRequestResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/AccountRequestResponseExample"
+        400:
+          description: Bad request. Validation failed.
         404:
           description: Request not found.
+components:
+  schemas:
+    AccountRequest:
+      type: object
+      description: Customer details for account registration
+      required:
+        - name
+        - address
+        - dateOfBirth
+      properties:
+        name:
+          type: string
+          example: "John Abrutzi"
+          description: "Customer's full name"
+        address:
+          type: object
+          required:
+            - street
+            - houseNumber
+            - postalCode
+            - city
+          properties:
+            street:
+              type: string
+              example: "Corner Street"
+            houseNumber:
+              type: string
+              example: "007"
+            postalCode:
+              type: string
+              pattern: "^[0-9]{4} [A-Z]{2}$"
+              example: "1234 AB"
+            city:
+              type: string
+              example: "Amsterdam"
+        dateOfBirth:
+          type: string
+          format: date
+          example: "05-10-1990"
+        idDocument:
+          type: string
+          example: "document_url_or_id"
+        accountType:
+          type: string
+          enum: [ SAVINGS, CURRENT, INVESTMENT ]
+          example: "SAVINGS"
+        startingBalance:
+          type: number
+          example: 1000
+        monthlySalary:
+          type: number
+          example: 3000
+        email:
+          type: string
+          format: email
+          example: "john.abrutzi@example.com"
+        interestedInOtherProducts:
+          type: string
+          enum: [ Y, N ]
+          example: "Y"
+    AccountRequestResponse:
+      type: object
+      description: Success response for account creation
+      properties:
+        id:
+          type: integer
+          example: 1
+        requestId:
+          type: string
+          example: "uuid-abc-123"
+        status:
+          type: string
+          example: "PENDING"
+        state:
+          type: string
+          example: "STARTED"
+        message:
+          type: string
+          example: "Account opening request started."
+  examples:
+    AccountRequestExample:
+      description: Example request for account opening
+      value:
+        name: "John Brad"
+        address:
+          - street: "Bradley Avenue"
+            houseNumber: "01"
+            postalCode: "1234 AC"
+            city: "Amsterdam"
+        dateOfBirth: "05-10-1990"
+        idDocument: "http://filelocation.com/doc-01.pdf"
+        accountType: "SAVINGS"
+        startingBalance: 1000
+        monthlySalary: 3000
+        email: "john.brad@example.com"
+        interestedInOtherProducts: "Y"
+    AccountRequestResponseExample:
+      description: Example response for account opening
+      value:
+        id: 1
+        requestId: "uuid-abc-123"
+        status: "PENDING"
+        state: "STARTED"
+        message: "Account opening request started."
