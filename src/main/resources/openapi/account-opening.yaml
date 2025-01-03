@@ -86,10 +86,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AccountRequest"
+              $ref: "#/components/schemas/AccountUpdateRequest"
             examples:
               default:
-                $ref: "#/components/examples/AccountRequestExample"
+                $ref: "#/components/examples/AccountUpdateRequestExample"
       responses:
         200:
           description: Account request submitted successfully.
@@ -199,6 +199,9 @@ components:
           type: integer
           example: 123
           description: id of the account to update. Not the requestId.
+        requestId:
+          type: string
+          example: "uuid-unique-123"
         name:
           type: string
           example: "John Abrutzi"
@@ -289,6 +292,7 @@ components:
       description: Example request for account opening
       value:
         id: 123
+        requestId: "uuid-unique-id-001"
         name: "John Brad"
         address:
           - street: "Bradley Avenue"
