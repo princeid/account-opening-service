@@ -8,19 +8,27 @@ Account Opening Service for Alexa bank - V2.
 
 - Java 21
 - Spring boot 3.4.1
+- Maven
 - MySql
+- H2
 - Docker
 - Openapi - Swagger
-- Spring Security & OAUTH 2.0
 
-## How to run Application on docker
+## How to run Application locally using H2 Database
 
+### Clone or download zip project
+
+Use Maven to build and run the application:
+
+- bash mvn clean install
+- bash mvn spring-boot:run OR click Run on the `AccountOpeningServiceApplication` if using IntelliJ Idea
+
+## How to run Application on docker using MySQL Database
+
+- Clone or download zip project - git@github.com:princeid/account-opening-service.git
 - Download docker engine or docker desktop https://www.docker.com/products/docker-desktop/
-- Create `.env` file in project root directory with the following db credentials
-  (MYSQL_DATABASE_URL, MYSQL_DATABASE_SCHEMA, MYSQL_ROOT_USER, MYSQL_ROOT_PASSWORD)
-- run `mvn clean install`
-- From project root directory terminal run `docker-compose up --build`. App should be running on
-  `http://localhost:8080/`
+- cd into project root directory and run on terminal ` docker-compose up `. App should be running on
+  `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`
 
 ## Drop containers AND/OR volumes
 

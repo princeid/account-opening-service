@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk-slim
+FROM openjdk:17-slim
 WORKDIR /app
 EXPOSE 8080
 COPY target/*.jar /app/account-opening-service.jar
