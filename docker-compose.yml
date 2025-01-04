@@ -6,11 +6,11 @@ services:
     image: mysql:8.4.3
     container_name: mysql-container
     environment:
+      MYSQL_ROOT_PASSWORD: root@password
+      MYSQL_DATABASE: alexa_bank
       # Adding credentials directly for easy testing without needing to manually add `.env` file to project root
       #      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       #      MYSQL_DATABASE: ${MYSQL_DATABASE_SCHEMA}
-      MYSQL_ROOT_PASSWORD: root@password
-      MYSQL_DATABASE: alexa_bank
     ports:
       - "3306:3306"
     volumes:
@@ -24,12 +24,12 @@ services:
     image: princeid/accountopeningservice:0.0.1
     container_name: account-opening-service
     environment:
-      #      SPRING_DATASOURCE_URL: ${MYSQL_DATABASE_URL}
-      #      SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USER}
-      #      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/alexa_bank
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root@password
+      #      SPRING_DATASOURCE_URL: ${MYSQL_DATABASE_URL}
+      #      SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USER}
+      #      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:
