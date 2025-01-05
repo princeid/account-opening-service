@@ -3,11 +3,13 @@ package com.alexa.account_opening_service.service.impl;
 import com.alexa.account_opening_service.dto.AccountRequestDTO;
 import com.alexa.account_opening_service.dto.AccountResponseDTO;
 import com.alexa.account_opening_service.entity.AccountRequest;
+import com.alexa.account_opening_service.entity.Address;
 import com.alexa.account_opening_service.entity.State;
 import com.alexa.account_opening_service.entity.Status;
+import com.alexa.account_opening_service.exception.BadRequestException;
+import com.alexa.account_opening_service.exception.IdNotFoundException;
 import com.alexa.account_opening_service.repository.CustomerAccountRepository;
 import com.alexa.account_opening_service.service.CustomerAccountService;
-import com.alexa.account_opening_service.service.mapper.CustomerAccountMapper;
 import com.alexa.account_opening_service.service.mapper.CustomerAccountResponseMapper;
 import com.alexa.account_opening_service.service.util.Generator;
 import jakarta.validation.Valid;
@@ -18,6 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Objects;
+
+import static com.alexa.account_opening_service.service.mapper.CustomerAccountMapper.mapToEntity;
+import static com.alexa.account_opening_service.service.mapper.CustomerAccountMapper.mapUpdateToEntity;
+import static com.alexa.account_opening_service.service.mapper.CustomerAccountResponseMapper.mapToResponse;
 
 @Service
 @Transactional
@@ -34,35 +40,56 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     @Override
     public AccountResponseDTO beginAccountCreation(@Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        AccountRequest accountRequest = CustomerAccountMapper.mapToEntity(requestDto);
-        return CustomerAccountResponseMapper.mapToResponse(start(accountRequest));
+        AccountRequest accountRequest = mapToEntity(requestDto);
+        return mapToResponse(start(accountRequest));
     }
 
     @Override
     public AccountResponseDTO updateAccountCreation(@Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        AccountRequest accountRequest = CustomerAccountMapper.mapToEntity(requestDto);
-        return CustomerAccountResponseMapper.mapToResponse(update(accountRequest));
+        var request = customerAccountRepository.findById(requestDto.getId());
+
+        return request.map(accountRequest -> {
+            accountRequest = mapUpdateToEntity(accountRequest,
+                    requestDto.toBuilder()
+                            .withAddress(updateAddress(accountRequest.getAddress(), requestDto.getAddress()))
+                            .build());
+            return mapToResponse(update(accountRequest));
+        }).orElseThrow(() -> new IdNotFoundException("Account not found with id " + requestDto.getId()));
     }
 
     @Override
     public AccountResponseDTO pauseAccountCreation(@Valid String requestId) {
         Objects.requireNonNull(requestId);
-        AccountRequest accountRequest = customerAccountRepository.findByRequestId(requestId);
-        return CustomerAccountResponseMapper.mapToResponse(pause(accountRequest));
+        var accountRequest = customerAccountRepository.findByRequestId(requestId);
+        return accountRequest
+                .map(request -> {
+                    var pausedAccountRequest = pause(request);
+                    return mapToResponse(pausedAccountRequest);
+                })
+                .orElseThrow(() -> new IdNotFoundException("Account not found with requestId " + requestId));
     }
 
     @Override
     public AccountResponseDTO submitAccountCreationRequest(@Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        AccountRequest accountRequest = CustomerAccountMapper.mapToEntity(requestDto);
-        return CustomerAccountResponseMapper.mapToResponse(complete(accountRequest));
+        var request = customerAccountRepository.findById(requestDto.getId());
+        return request.map(accountRequest -> {
+            accountRequest = mapUpdateToEntity(accountRequest,
+                    requestDto.toBuilder()
+                            .withAddress(updateAddress(accountRequest.getAddress(), requestDto.getAddress()))
+                            .build());
+            return mapToResponse(submit(accountRequest));
+        }).orElseThrow(() -> new IdNotFoundException("Account not found with id " + requestDto.getId()));
     }
 
     @Override
     public AccountResponseDTO getAccountRequestById(String requestId) {
         Objects.requireNonNull(requestId);
-        return CustomerAccountResponseMapper.mapToResponse(customerAccountRepository.findByRequestId(requestId));
+        var request = customerAccountRepository.findByRequestId(requestId);
+        return request.map(CustomerAccountResponseMapper::mapToResponse).orElseThrow(() ->
+                new IdNotFoundException("Account not found with requestId " + requestId));
+
     }
 
     private AccountRequest start(AccountRequest accountRequest) {
@@ -100,7 +127,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         return save(accountRequest);
     }
 
-    private AccountRequest complete(AccountRequest accountRequest) {
+    private AccountRequest submit(AccountRequest accountRequest) {
         accountRequest = accountRequest.toBuilder()
                 .withStatus(Status.CONFIRMED)
                 .withMessage(State.COMPLETED.getMessage())
@@ -111,7 +138,24 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         return save(accountRequest);
     }
 
+    private Address updateAddress(Address oldAddress, Address newAddress) {
+        return newAddress.toBuilder().withId(oldAddress.getId()).build();
+    }
+
     private AccountRequest save(final AccountRequest accountRequest) {
+        if (accountRequest.getId() != null) {
+            var currentRequest = customerAccountRepository.findById(accountRequest.getId());
+            currentRequest.ifPresentOrElse(
+                    request -> {
+                        if (request.getStatus().equals(Status.CONFIRMED)) {
+                            throw new BadRequestException("Cannot update request. " +
+                                    "Account opening request is already completed for requestId - "
+                                    + request.getRequestId());
+                        }
+                    },
+                    () -> log.info("Saving account request for requestId - {}", accountRequest.getRequestId())
+            );
+        }
         return customerAccountRepository.save(accountRequest);
     }
 }

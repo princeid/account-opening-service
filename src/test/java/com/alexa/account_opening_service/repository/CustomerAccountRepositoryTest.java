@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,14 +49,14 @@ public class CustomerAccountRepositoryTest {
     @Test
     void shouldFindCustomerAccountByRequestId() {
         // Given
-        when(customerAccountRepository.findByRequestId(REQUEST_ID)).thenReturn(accountRequest);
+        when(customerAccountRepository.findByRequestId(REQUEST_ID)).thenReturn(Optional.ofNullable(accountRequest));
 
         // When
-        var actual = customerAccountRepository.findByRequestId(REQUEST_ID);
+        Optional<AccountRequest> actual = customerAccountRepository.findByRequestId(REQUEST_ID);
 
         // Then
         assertNotNull(actual);
-        assertEquals(REQUEST_ID, actual.getRequestId());
+        assertEquals(REQUEST_ID, actual.get().getRequestId());
         verify(customerAccountRepository, times(1)).findByRequestId(REQUEST_ID);
     }
 

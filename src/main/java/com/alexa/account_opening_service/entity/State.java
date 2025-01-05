@@ -1,5 +1,8 @@
 package com.alexa.account_opening_service.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum State {
     STARTED("Account opening request started."), // Status is PENDING
     PAUSED("Request paused. Resume anytime."), // Status is PENDING
@@ -12,7 +15,4 @@ public enum State {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

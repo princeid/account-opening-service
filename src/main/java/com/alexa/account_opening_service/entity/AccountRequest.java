@@ -38,10 +38,12 @@ public class AccountRequest implements Serializable {
     )
     private String dateOfBirth;
     private String idDocument;
+    @Enumerated(EnumType.STRING)
     private AccountType accountType;
     private Double startingBalance;
     private Double monthlySalary;
     @Email
+    @Column(unique = true)
     private String email;
     @Pattern(regexp = "Y|N")
     private String interestedInOtherProducts;

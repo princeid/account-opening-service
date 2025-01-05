@@ -20,8 +20,8 @@ public class CustomerAccountController {
 
     @PostMapping
     public ResponseEntity<AccountResponseDTO> createRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
-        if (requestDto.getId() != null) {
-            throw new BadRequestException("A new request cannot already have an ID");
+        if (requestDto.getId() != null || requestDto.getRequestId() != null) {
+            throw new BadRequestException("A new request cannot already have an Id");
         }
         AccountResponseDTO response = customerAccountService.beginAccountCreation(requestDto);
         return ResponseEntity.status(200).body(response);
@@ -47,6 +47,9 @@ public class CustomerAccountController {
 
     @PostMapping("/submit")
     public ResponseEntity<AccountResponseDTO> submitRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+        if (requestDto.getRequestId() == null) {
+            throw new BadRequestException("requestId is required");
+        }
         AccountResponseDTO response = customerAccountService.submitAccountCreationRequest(requestDto);
         return ResponseEntity.ok(response);
     }
@@ -56,7 +59,7 @@ public class CustomerAccountController {
         if (requestId == null) {
             throw new BadRequestException("requestId is required");
         }
-        AccountResponseDTO accountRequest = customerAccountService.getAccountRequestById(requestId);
-        return ResponseEntity.ok(accountRequest);
+        AccountResponseDTO response = customerAccountService.getAccountRequestById(requestId);
+        return ResponseEntity.ok(response);
     }
 }
