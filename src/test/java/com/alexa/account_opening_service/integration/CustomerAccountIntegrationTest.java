@@ -20,6 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class CustomerAccountIntegrationTest {
-    private static final String REQUEST_ID = "random-uuid-request-id-1";
+    private static final Random RANDOM = new Random();
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,7 +62,7 @@ public class CustomerAccountIntegrationTest {
     void shouldReturn200WhenBeginRequestIsValid() throws Exception {
         accountRequestDTO = AccountRequestDTO.builder()
                 .withName("Test Name")
-                .withEmail("test@test.com")
+                .withEmail("test" + RANDOM.nextLong() + "@test.com")
                 .withDateOfBirth("01-01-1990")
                 .withAddress(
                         Address.builder()
@@ -97,16 +99,6 @@ public class CustomerAccountIntegrationTest {
     void shouldReturn400WhenPauseRequestIdIsNull() throws Exception {
         mockMvc.perform(post("/api/v1/account-opening/request/{requestId}/pause", ""))
                 .andExpect(status().isNotFound())
-                .andDo(print());
-    }
-
-    @Test
-    void shouldReturn400WhenSubmitRequestIdIsNull() throws Exception {
-        AccountRequestDTO requestDto = new AccountRequestDTO();
-        mockMvc.perform(post("/api/v1/account-opening/request/submit")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 

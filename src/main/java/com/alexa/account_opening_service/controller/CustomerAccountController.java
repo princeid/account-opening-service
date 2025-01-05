@@ -23,7 +23,7 @@ public class CustomerAccountController {
     public ResponseEntity<AccountResponseDTO> createRequest(@RequestBody @Validated AccountRequestDTO requestDto,
                                                             BindingResult bindingResult) {
         if (requestDto.getId() != null || requestDto.getRequestId() != null) {
-            throw new BadRequestException("A new request cannot already have an id or request id");
+            throw new BadRequestException("A new request cannot already have an id or requestId");
         }
         if (bindingResult.hasErrors()) {
             throw new BadRequestException("One or more fields are Invalid");

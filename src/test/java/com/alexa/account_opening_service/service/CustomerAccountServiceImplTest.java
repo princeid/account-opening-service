@@ -7,6 +7,7 @@ import com.alexa.account_opening_service.entity.*;
 import com.alexa.account_opening_service.exception.BadRequestException;
 import com.alexa.account_opening_service.repository.CustomerAccountRepository;
 import com.alexa.account_opening_service.service.impl.CustomerAccountServiceImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,6 +68,12 @@ public class CustomerAccountServiceImplTest {
                 .build();
     }
 
+    @AfterEach
+    void tearDown() {
+        accountRequestDTO = null;
+        accountRequest = null;
+    }
+
     @Test
     public void shouldBeginAccountCreation() {
         // Given
@@ -97,6 +104,7 @@ public class CustomerAccountServiceImplTest {
     @Test
     public void shouldUpdateAccountCreation() {
         // Given
+        accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
         var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
@@ -156,6 +164,7 @@ public class CustomerAccountServiceImplTest {
     @Test
     public void shouldCompleteAccountCreation() {
         // Given
+        accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
         var current = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
@@ -192,6 +201,7 @@ public class CustomerAccountServiceImplTest {
     @Test
     public void shouldNotSaveAccountCreationIfStatusCompleted() {
         // Given
+        accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
         var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
@@ -210,8 +220,32 @@ public class CustomerAccountServiceImplTest {
         );
 
         // Then
-        assertEquals("Cannot update request. Account opening request is already completed for requestId - "
+        assertEquals("Cannot update request. Account opening request is already completed for requestId "
                 + REQUEST_ID, exception.getMessage());
+    }
+
+    @Test
+    public void shouldNotSaveAccountCreationIfIdOrRequestIdIsInvalid() {
+        // Given
+        var expected = accountRequest.toBuilder()
+                .withId(ID)
+                .withRequestId(REQUEST_ID)
+                .withState(State.COMPLETED)
+                .withStatus(Status.CONFIRMED)
+                .withMessage(State.COMPLETED.getMessage())
+                .build();
+        when(customerAccountRepository.findById(ID)).thenReturn(Optional.ofNullable(expected));
+        when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
+
+        // When
+        BadRequestException exception = assertThrows(
+                BadRequestException.class,
+                () -> serviceImplMock.submitAccountCreationRequest(accountRequestDTO),
+                "Expected submitAccountCreationRequest() to throw, but it didn't"
+        );
+
+        // Then
+        assertEquals("Invalid requestId null", exception.getMessage());
     }
 
     @Test

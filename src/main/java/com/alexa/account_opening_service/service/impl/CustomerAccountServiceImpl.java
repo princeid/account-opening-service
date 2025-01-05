@@ -53,7 +53,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
         return request.map(accountRequest -> {
             if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
-                throw new BadRequestException("Invalid request id " + requestDto.getRequestId());
+                throw new BadRequestException("Invalid requestId " + requestDto.getRequestId());
             }
             accountRequest = mapUpdateToEntity(accountRequest,
                     requestDto.toBuilder()
@@ -82,7 +82,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
         return request.map(accountRequest -> {
             if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
-                throw new BadRequestException("Invalid request id " + requestDto.getRequestId());
+                throw new BadRequestException("Invalid requestId " + requestDto.getRequestId());
             }
             accountRequest = mapUpdateToEntity(accountRequest,
                     requestDto.toBuilder()
