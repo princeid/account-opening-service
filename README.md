@@ -27,11 +27,23 @@ Account Opening Service for Alexa bank - V2.
 
 ## How to run Application on docker using MySQL Database
 
-- Clone or download zip project - git@github.com:princeid/account-opening-service.git
-- Download docker engine or docker desktop https://www.docker.com/products/docker-desktop/
-- cd into project root directory and run on terminal ` docker-compose up `
-- App should be running on `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`. Api
-  docs - `http://localhost:8080/v3/api-docs`
+### For Windows (x86_64 architecture):
+
+- Follow steps 1-5 below.
+
+### For Mac:
+
+- Skip step 3.
+
+1. Clone or download zip project - git@github.com:princeid/account-opening-service.git
+2. Download docker engine or docker desktop https://www.docker.com/products/docker-desktop/
+3. edit the tag in `Application container image` in `docker-compose` file from `princeid/accountopeningservice:0.0.1` to
+   `princeid/accountopeningservice:0.0.2`
+4. cd into project root directory and run on terminal ` docker-compose up `
+5. App should be running on `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`.
+   Api
+   docs - `http://localhost:8080/v3/api-docs`
+
 - To drop containers and volumes - `docker-compose down -v`
 
 ## Testing
