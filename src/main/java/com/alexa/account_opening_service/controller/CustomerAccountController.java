@@ -20,8 +20,8 @@ public class CustomerAccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponseDTO> createRequest(final @RequestBody @Validated AccountRequestDTO requestDto,
-                                                            BindingResult bindingResult) {
+    public ResponseEntity<AccountResponseDTO> createRequest(@RequestBody @Validated final AccountRequestDTO requestDto,
+                                                            final BindingResult bindingResult) {
         if (requestDto.getId() != null || requestDto.getRequestId() != null) {
             throw new BadRequestException("A new request cannot already have an id or requestId");
         }
@@ -33,8 +33,8 @@ public class CustomerAccountController {
     }
 
     @PutMapping
-    public ResponseEntity<AccountResponseDTO> updateRequest(final @RequestBody @Validated AccountRequestDTO requestDto,
-                                                            BindingResult bindingResult) {
+    public ResponseEntity<AccountResponseDTO> updateRequest(@RequestBody @Validated final AccountRequestDTO requestDto,
+                                                            final BindingResult bindingResult) {
         if (requestDto.getId() == null) {
             throw new BadRequestException("Id is required");
         }
@@ -46,7 +46,7 @@ public class CustomerAccountController {
     }
 
     @PostMapping("/{requestId}/pause")
-    public ResponseEntity<AccountResponseDTO> pauseRequest(final @PathVariable String requestId) {
+    public ResponseEntity<AccountResponseDTO> pauseRequest(@PathVariable final String requestId) {
         if (requestId == null) {
             throw new BadRequestException("requestId is required");
         }
@@ -55,8 +55,8 @@ public class CustomerAccountController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<AccountResponseDTO> submitRequest(final @RequestBody @Validated AccountRequestDTO requestDto,
-                                                            BindingResult bindingResult) {
+    public ResponseEntity<AccountResponseDTO> submitRequest(@RequestBody @Validated final AccountRequestDTO requestDto,
+                                                            final BindingResult bindingResult) {
         if (requestDto.getRequestId() == null) {
             throw new BadRequestException("requestId is required");
         }
@@ -68,7 +68,7 @@ public class CustomerAccountController {
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<AccountResponseDTO> getAccountRequest(final @PathVariable String requestId) {
+    public ResponseEntity<AccountResponseDTO> getAccountRequest(@PathVariable final String requestId) {
         if (requestId == null) {
             throw new BadRequestException("requestId is required");
         }

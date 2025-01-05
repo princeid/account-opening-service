@@ -40,14 +40,14 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO beginAccountCreation(final @Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO beginAccountCreation(@Valid final AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
         final AccountRequest accountRequest = mapToEntity(requestDto);
         return mapToResponse(start(accountRequest));
     }
 
     @Override
-    public AccountResponseDTO updateAccountCreation(final @Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO updateAccountCreation(@Valid final AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
         final var request = customerAccountRepository.findById(requestDto.getId());
 
@@ -64,7 +64,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO pauseAccountCreation(final @Valid String requestId) {
+    public AccountResponseDTO pauseAccountCreation(final String requestId) {
         Objects.requireNonNull(requestId);
         final var accountRequest = customerAccountRepository.findByRequestId(requestId);
         return accountRequest
@@ -76,7 +76,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO submitAccountCreationRequest(final @Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO submitAccountCreationRequest(@Valid final AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
         final var request = customerAccountRepository.findById(requestDto.getId());
 
