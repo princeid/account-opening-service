@@ -6,7 +6,7 @@ Account Opening Service for Alexa bank - V2.
 
 ## Tools
 
-- Java 21
+- Java 17
 - Spring boot 3.4.1
 - Maven
 - MySql
