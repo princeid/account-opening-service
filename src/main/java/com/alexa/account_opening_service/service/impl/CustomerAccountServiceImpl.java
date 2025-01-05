@@ -35,7 +35,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     private final CustomerAccountRepository customerAccountRepository;
 
     @Autowired
-    public CustomerAccountServiceImpl(CustomerAccountRepository customerAccountRepository) {
+    public CustomerAccountServiceImpl(final CustomerAccountRepository customerAccountRepository) {
         this.customerAccountRepository = customerAccountRepository;
     }
 
