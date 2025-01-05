@@ -169,10 +169,9 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
 
         try {
             return customerAccountRepository.save(accountRequest);
-        } catch (DataIntegrityViolationException ex) {
+        } catch (final DataIntegrityViolationException ex) {
             final Throwable rootCause = ex.getRootCause();
-            assert rootCause != null;
-            if (rootCause.getMessage().contains("Duplicate entry")) {
+            if (rootCause != null && rootCause.getMessage().contains("Duplicate entry")) {
                 throw new UniqueConstraintViolationException("Email already exists: " + accountRequest.getEmail());
             }
             throw ex; // Re-throw for other integrity violations
