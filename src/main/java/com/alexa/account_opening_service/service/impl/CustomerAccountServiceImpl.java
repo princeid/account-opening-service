@@ -40,16 +40,16 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO beginAccountCreation(@Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO beginAccountCreation(final @Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        AccountRequest accountRequest = mapToEntity(requestDto);
+        final AccountRequest accountRequest = mapToEntity(requestDto);
         return mapToResponse(start(accountRequest));
     }
 
     @Override
-    public AccountResponseDTO updateAccountCreation(@Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO updateAccountCreation(final @Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        var request = customerAccountRepository.findById(requestDto.getId());
+        final var request = customerAccountRepository.findById(requestDto.getId());
 
         return request.map(accountRequest -> {
             if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
@@ -64,21 +64,21 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO pauseAccountCreation(@Valid String requestId) {
+    public AccountResponseDTO pauseAccountCreation(final @Valid String requestId) {
         Objects.requireNonNull(requestId);
-        var accountRequest = customerAccountRepository.findByRequestId(requestId);
+        final var accountRequest = customerAccountRepository.findByRequestId(requestId);
         return accountRequest
                 .map(request -> {
-                    var pausedAccountRequest = pause(request);
+                    final var pausedAccountRequest = pause(request);
                     return mapToResponse(pausedAccountRequest);
                 })
                 .orElseThrow(() -> new IdNotFoundException("Account not found with requestId " + requestId));
     }
 
     @Override
-    public AccountResponseDTO submitAccountCreationRequest(@Valid AccountRequestDTO requestDto) {
+    public AccountResponseDTO submitAccountCreationRequest(final @Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
-        var request = customerAccountRepository.findById(requestDto.getId());
+        final var request = customerAccountRepository.findById(requestDto.getId());
 
         return request.map(accountRequest -> {
             if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
@@ -93,9 +93,9 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     @Override
-    public AccountResponseDTO getAccountRequestById(String requestId) {
+    public AccountResponseDTO getAccountRequestById(final String requestId) {
         Objects.requireNonNull(requestId);
-        var request = customerAccountRepository.findByRequestId(requestId);
+        final var request = customerAccountRepository.findByRequestId(requestId);
         return request.map(CustomerAccountResponseMapper::mapToResponse).orElseThrow(() ->
                 new IdNotFoundException("Account not found with requestId " + requestId));
 
@@ -147,14 +147,14 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         return save(accountRequest);
     }
 
-    private Address updateAddress(Address oldAddress, Address newAddress) {
+    private Address updateAddress(final Address oldAddress, final Address newAddress) {
         return newAddress.toBuilder().withId(oldAddress.getId()).build();
     }
 
     private AccountRequest save(final AccountRequest accountRequest) {
         // Check if the request has already been completed before updating
         if (accountRequest.getId() != null) {
-            var currentRequest = customerAccountRepository.findById(accountRequest.getId());
+            final var currentRequest = customerAccountRepository.findById(accountRequest.getId());
             currentRequest.ifPresentOrElse(
                     request -> {
                         if (request.getStatus().equals(Status.CONFIRMED)) {
@@ -170,8 +170,9 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         try {
             return customerAccountRepository.save(accountRequest);
         } catch (DataIntegrityViolationException ex) {
-            Throwable rootCause = ex.getRootCause();
-            if (rootCause != null && rootCause.getMessage().contains("Duplicate entry")) {
+            final Throwable rootCause = ex.getRootCause();
+            assert rootCause != null;
+            if (rootCause.getMessage().contains("Duplicate entry")) {
                 throw new UniqueConstraintViolationException("Email already exists: " + accountRequest.getEmail());
             }
             throw ex; // Re-throw for other integrity violations

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class CustomerAccountIntegrationTest {
+class CustomerAccountIntegrationTest {
     private static final Random RANDOM = new Random();
 
     @Autowired
@@ -44,7 +44,7 @@ public class CustomerAccountIntegrationTest {
     private final CustomerAccountRepository customerAccountRepository;
 
     @Autowired
-    public CustomerAccountIntegrationTest(CustomerAccountService customerAccountService, CustomerAccountRepository customerAccountRepository) {
+    public CustomerAccountIntegrationTest(final CustomerAccountService customerAccountService, final CustomerAccountRepository customerAccountRepository) {
         this.customerAccountService = customerAccountService;
         this.customerAccountRepository = customerAccountRepository;
     }

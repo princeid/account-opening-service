@@ -6,13 +6,13 @@ import jakarta.validation.Valid;
 
 
 public interface CustomerAccountService {
-    AccountResponseDTO beginAccountCreation(@Valid AccountRequestDTO requestDto);
+    AccountResponseDTO beginAccountCreation(final @Valid AccountRequestDTO requestDto);
 
-    AccountResponseDTO updateAccountCreation(@Valid AccountRequestDTO requestDto);
+    AccountResponseDTO updateAccountCreation(final @Valid AccountRequestDTO requestDto);
 
-    AccountResponseDTO pauseAccountCreation(String requestId);
+    AccountResponseDTO pauseAccountCreation(final String requestId);
 
-    AccountResponseDTO submitAccountCreationRequest(@Valid AccountRequestDTO requestDto);
+    AccountResponseDTO submitAccountCreationRequest(final @Valid AccountRequestDTO requestDto);
 
-    AccountResponseDTO getAccountRequestById(String requestId);
+    AccountResponseDTO getAccountRequestById(final String requestId);
 }

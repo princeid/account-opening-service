@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class CustomerAccountRepositoryTest {
+class CustomerAccountRepositoryTest {
     private static final Long ID = 1L;
     private static final String REQUEST_ID = "random-uuid-request-id-1";
 
@@ -52,7 +52,7 @@ public class CustomerAccountRepositoryTest {
         when(customerAccountRepository.findByRequestId(REQUEST_ID)).thenReturn(Optional.ofNullable(accountRequest));
 
         // When
-        Optional<AccountRequest> actual = customerAccountRepository.findByRequestId(REQUEST_ID);
+        final Optional<AccountRequest> actual = customerAccountRepository.findByRequestId(REQUEST_ID);
 
         // Then
         assertNotNull(actual);
@@ -66,7 +66,7 @@ public class CustomerAccountRepositoryTest {
         when(customerAccountRepository.findByRequestId(REQUEST_ID)).thenReturn(null);
 
         // When
-        var actual = customerAccountRepository.findByRequestId(REQUEST_ID);
+        final var actual = customerAccountRepository.findByRequestId(REQUEST_ID);
 
         // Then
         assertNull(actual);

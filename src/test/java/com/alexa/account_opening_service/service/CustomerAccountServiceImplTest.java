@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
-public class CustomerAccountServiceImplTest {
+class CustomerAccountServiceImplTest {
     private static final Long ID = 1L;
     private static final String REQUEST_ID = "random-uuid-request-id-1";
 
@@ -75,9 +75,9 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldBeginAccountCreation() {
+    void shouldBeginAccountCreation() {
         // Given
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.STARTED)
@@ -87,8 +87,8 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        AccountResponseDTO response = serviceImplMock.beginAccountCreation(accountRequestDTO);
-        AccountResponseDTO accountResponseDTO = AccountResponseDTO.builder()
+        final var response = serviceImplMock.beginAccountCreation(accountRequestDTO);
+        final var accountResponseDTO = AccountResponseDTO.builder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.STARTED)
@@ -102,10 +102,10 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldUpdateAccountCreation() {
+    void shouldUpdateAccountCreation() {
         // Given
         accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.UPDATED)
@@ -116,11 +116,11 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        AccountResponseDTO response = serviceImplMock.updateAccountCreation(accountRequestDTO.toBuilder()
+        final var response = serviceImplMock.updateAccountCreation(accountRequestDTO.toBuilder()
                 .withEmail("example@test.com")
                 .withStartingBalance(2000.05D)
                 .build());
-        AccountResponseDTO accountResponseDTO = AccountResponseDTO.builder()
+        final var accountResponseDTO = AccountResponseDTO.builder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.UPDATED)
@@ -134,9 +134,9 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldPauseAccountCreation() {
+    void shouldPauseAccountCreation() {
         // Given
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.PAUSED)
@@ -147,8 +147,8 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        AccountResponseDTO response = serviceImplMock.pauseAccountCreation(REQUEST_ID);
-        AccountResponseDTO accountResponseDTO = AccountResponseDTO.builder()
+        final var response = serviceImplMock.pauseAccountCreation(REQUEST_ID);
+        final var accountResponseDTO = AccountResponseDTO.builder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.PAUSED)
@@ -162,10 +162,10 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldCompleteAccountCreation() {
+    void shouldCompleteAccountCreation() {
         // Given
         accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
-        var current = accountRequest.toBuilder()
+        final var current = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.PAUSED)
@@ -173,7 +173,7 @@ public class CustomerAccountServiceImplTest {
                 .withMessage(State.PAUSED.getMessage())
                 .build();
 
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.COMPLETED)
@@ -184,8 +184,8 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        AccountResponseDTO response = serviceImplMock.submitAccountCreationRequest(accountRequestDTO);
-        AccountResponseDTO accountResponseDTO = AccountResponseDTO.builder()
+        final var response = serviceImplMock.submitAccountCreationRequest(accountRequestDTO);
+        final var accountResponseDTO = AccountResponseDTO.builder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.COMPLETED)
@@ -199,10 +199,10 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldNotSaveAccountCreationIfStatusCompleted() {
+    void shouldNotSaveAccountCreationIfStatusCompleted() {
         // Given
         accountRequestDTO = accountRequestDTO.toBuilder().withRequestId(REQUEST_ID).build();
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.COMPLETED)
@@ -213,7 +213,7 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        BadRequestException exception = assertThrows(
+        final BadRequestException exception = assertThrows(
                 BadRequestException.class,
                 () -> serviceImplMock.submitAccountCreationRequest(accountRequestDTO),
                 "Expected submitAccountCreationRequest() to throw, but it didn't"
@@ -225,7 +225,7 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldNotSaveAccountCreationIfIdOrRequestIdIsInvalid() {
+    void shouldNotSaveAccountCreationIfIdOrRequestIdIsInvalid() {
         // Given
         var expected = accountRequest.toBuilder()
                 .withId(ID)
@@ -238,7 +238,7 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.save(any(AccountRequest.class))).thenReturn(expected);
 
         // When
-        BadRequestException exception = assertThrows(
+        final BadRequestException exception = assertThrows(
                 BadRequestException.class,
                 () -> serviceImplMock.submitAccountCreationRequest(accountRequestDTO),
                 "Expected submitAccountCreationRequest() to throw, but it didn't"
@@ -249,9 +249,9 @@ public class CustomerAccountServiceImplTest {
     }
 
     @Test
-    public void shouldGetAccountRequestById() {
+    void shouldGetAccountRequestById() {
         // Given
-        var expected = accountRequest.toBuilder()
+        final var expected = accountRequest.toBuilder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.STARTED)
@@ -261,8 +261,8 @@ public class CustomerAccountServiceImplTest {
         when(customerAccountRepository.findByRequestId(REQUEST_ID)).thenReturn(Optional.ofNullable(expected));
 
         // When
-        AccountResponseDTO response = serviceImplMock.getAccountRequestById(REQUEST_ID);
-        AccountResponseDTO accountResponseDTO = AccountResponseDTO.builder()
+        final var response = serviceImplMock.getAccountRequestById(REQUEST_ID);
+        final var accountResponseDTO = AccountResponseDTO.builder()
                 .withId(ID)
                 .withRequestId(REQUEST_ID)
                 .withState(State.STARTED)

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class AccountOpeningExceptionHandler {
     @ExceptionHandler(value = IdNotFoundException.class)
-    public ResponseEntity<Object> handleRequestIdNotFoundException(IdNotFoundException idNotFoundException) {
-        DefaultException defaultException = new DefaultException(
+    public ResponseEntity<Object> handleRequestIdNotFoundException(final IdNotFoundException idNotFoundException) {
+        final DefaultException defaultException = new DefaultException(
                 idNotFoundException.getMessage(),
                 HttpStatus.NOT_FOUND
         );
@@ -17,8 +17,8 @@ public class AccountOpeningExceptionHandler {
     }
 
     @ExceptionHandler(value = BadRequestException.class)
-    public ResponseEntity<Object> handleBadRequestException(BadRequestException badRequestException) {
-        DefaultException defaultException = new DefaultException(
+    public ResponseEntity<Object> handleBadRequestException(final BadRequestException badRequestException) {
+        final DefaultException defaultException = new DefaultException(
                 badRequestException.getMessage(),
                 HttpStatus.BAD_REQUEST
         );
@@ -26,8 +26,8 @@ public class AccountOpeningExceptionHandler {
     }
 
     @ExceptionHandler(value = UniqueConstraintViolationException.class)
-    public ResponseEntity<Object> handleDataIntegrityViolationException(UniqueConstraintViolationException uniqueConstraintViolationException) {
-        DefaultException defaultException = new DefaultException(
+    public ResponseEntity<Object> handleDataIntegrityViolationException(final UniqueConstraintViolationException uniqueConstraintViolationException) {
+        final DefaultException defaultException = new DefaultException(
                 uniqueConstraintViolationException.getMessage(),
                 HttpStatus.BAD_REQUEST
         );
