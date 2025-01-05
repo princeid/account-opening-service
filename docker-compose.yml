@@ -21,7 +21,7 @@ services:
 
   # Application container
   app:
-    image: princeid/accountopeningservice:0.0.1
+    image: princeid/accountopeningservice:0.0.2
     container_name: account-opening-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/alexa_bank

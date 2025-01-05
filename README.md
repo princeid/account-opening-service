@@ -16,33 +16,27 @@ Account Opening Service for Alexa bank - V2.
 
 ## How to run Application locally using H2 Database
 
-- Clone or download zip project - git@github.com:princeid/account-opening-service.git
-- Enable Annotation Processors for @lombok. If using Intellij Idea - Goto
-  `Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors -> Annotation profile for account-opening-service` ->
-  Select `account-opening-service` Check `Obtain processors from project classpath`
-- bash mvn spring-boot:run OR click Run on the `AccountOpeningServiceApplication` if using Intellij
+1. Clone or download zip project - git@github.com:princeid/account-opening-service.git
+2. Ensure Annotation Processors is enabled for @lombok. If using Intellij Idea - Goto
+   `Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors -> Annotation profile for account-opening-service` ->
+   Select `account-opening-service` Check `Obtain processors from project classpath`
+3. `mvn spring-boot:run` OR click Run on the `AccountOpeningServiceApplication` if using Intellij
+
 - Swagger UI - http://localhost:8080/swagger-ui/index.html. API doc - `http://localhost:8080/v3/api-docs`
 - H2 database will be available at `http://localhost:8080/h2-console`. JDBC URL `jdbc:h2:mem:alexa_bank`, User Name =
   `sa`, Password = `password`.
 
 ## How to run Application on docker using MySQL Database
 
-### For Windows (x86_64 architecture):
-
-- Follow steps 1-5 below.
-
-### For Mac:
-
-- Skip step 3.
-
 1. Clone or download zip project - git@github.com:princeid/account-opening-service.git
 2. Download docker engine or docker desktop https://www.docker.com/products/docker-desktop/
-3. edit the tag in `Application container image` in `docker-compose` file from `princeid/accountopeningservice:0.0.1` to
-   `princeid/accountopeningservice:0.0.2`
-4. cd into project root directory and run on terminal ` docker-compose up `
-5. App should be running on `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`.
-   Api
-   docs - `http://localhost:8080/v3/api-docs`
+3. cd into project root directory and run on terminal ` docker-compose up `
+4. To access Mysql database -> Select Containers -> expand `account-opening-service -> mysql-container -> Exec`
+5. `mysql -u root -p` click Enter `root@password`.
+6. `Show databases -> use alexa_bank -> show tables; -> ...`
+
+- App should be running on `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`.
+  Api docs - `http://localhost:8080/v3/api-docs`
 
 - To drop containers and volumes - `docker-compose down -v`
 

@@ -2,6 +2,8 @@ package com.alexa.account_opening_service.dto;
 
 import com.alexa.account_opening_service.entity.AccountType;
 import com.alexa.account_opening_service.entity.Address;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,10 +30,11 @@ public class AccountRequestDTO {
     )
     private String dateOfBirth;
     private String idDocument;
+    @Enumerated(EnumType.STRING)
     private AccountType accountType;
     private Double startingBalance;
     private Double monthlySalary;
-    @Email
+    @Email(message = "Invalid email format")
     private String email;
     @Pattern(regexp = "Y|N")
     private String interestedInOtherProducts;

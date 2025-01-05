@@ -4,8 +4,9 @@ import com.alexa.account_opening_service.dto.AccountRequestDTO;
 import com.alexa.account_opening_service.dto.AccountResponseDTO;
 import com.alexa.account_opening_service.exception.BadRequestException;
 import com.alexa.account_opening_service.service.CustomerAccountService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,18 +20,26 @@ public class CustomerAccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponseDTO> createRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+    public ResponseEntity<AccountResponseDTO> createRequest(@RequestBody @Validated AccountRequestDTO requestDto,
+                                                            BindingResult bindingResult) {
         if (requestDto.getId() != null || requestDto.getRequestId() != null) {
-            throw new BadRequestException("A new request cannot already have an Id");
+            throw new BadRequestException("A new request cannot already have an id or request id");
+        }
+        if (bindingResult.hasErrors()) {
+            throw new BadRequestException("One or more fields are Invalid");
         }
         AccountResponseDTO response = customerAccountService.beginAccountCreation(requestDto);
         return ResponseEntity.status(200).body(response);
     }
 
     @PutMapping
-    public ResponseEntity<AccountResponseDTO> updateRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+    public ResponseEntity<AccountResponseDTO> updateRequest(@RequestBody @Validated AccountRequestDTO requestDto,
+                                                            BindingResult bindingResult) {
         if (requestDto.getId() == null) {
             throw new BadRequestException("Id is required");
+        }
+        if (bindingResult.hasErrors()) {
+            throw new BadRequestException("One or more fields are Invalid");
         }
         AccountResponseDTO response = customerAccountService.updateAccountCreation(requestDto);
         return ResponseEntity.ok(response);
@@ -46,9 +55,13 @@ public class CustomerAccountController {
     }
 
     @PostMapping("/submit")
-    public ResponseEntity<AccountResponseDTO> submitRequest(@Valid @RequestBody AccountRequestDTO requestDto) {
+    public ResponseEntity<AccountResponseDTO> submitRequest(@RequestBody @Validated AccountRequestDTO requestDto,
+                                                            BindingResult bindingResult) {
         if (requestDto.getRequestId() == null) {
             throw new BadRequestException("requestId is required");
+        }
+        if (bindingResult.hasErrors()) {
+            throw new BadRequestException("One or more fields are Invalid");
         }
         AccountResponseDTO response = customerAccountService.submitAccountCreationRequest(requestDto);
         return ResponseEntity.ok(response);

@@ -24,4 +24,13 @@ public class AccountOpeningExceptionHandler {
         );
         return new ResponseEntity<>(defaultException, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = UniqueConstraintViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolationException(UniqueConstraintViolationException uniqueConstraintViolationException) {
+        DefaultException defaultException = new DefaultException(
+                uniqueConstraintViolationException.getMessage(),
+                HttpStatus.BAD_REQUEST
+        );
+        return new ResponseEntity<>(defaultException, HttpStatus.BAD_REQUEST);
+    }
 }

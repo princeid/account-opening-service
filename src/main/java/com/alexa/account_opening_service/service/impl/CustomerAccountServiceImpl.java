@@ -8,6 +8,7 @@ import com.alexa.account_opening_service.entity.State;
 import com.alexa.account_opening_service.entity.Status;
 import com.alexa.account_opening_service.exception.BadRequestException;
 import com.alexa.account_opening_service.exception.IdNotFoundException;
+import com.alexa.account_opening_service.exception.UniqueConstraintViolationException;
 import com.alexa.account_opening_service.repository.CustomerAccountRepository;
 import com.alexa.account_opening_service.service.CustomerAccountService;
 import com.alexa.account_opening_service.service.mapper.CustomerAccountResponseMapper;
@@ -15,6 +16,7 @@ import com.alexa.account_opening_service.service.util.Generator;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +52,13 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
         var request = customerAccountRepository.findById(requestDto.getId());
 
         return request.map(accountRequest -> {
+            if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
+                throw new BadRequestException("Invalid request id " + requestDto.getRequestId());
+            }
             accountRequest = mapUpdateToEntity(accountRequest,
                     requestDto.toBuilder()
                             .withAddress(updateAddress(accountRequest.getAddress(), requestDto.getAddress()))
-                            .build());
+                            .build()); // Update address entity instead of creating new
             return mapToResponse(update(accountRequest));
         }).orElseThrow(() -> new IdNotFoundException("Account not found with id " + requestDto.getId()));
     }
@@ -74,11 +79,15 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     public AccountResponseDTO submitAccountCreationRequest(@Valid AccountRequestDTO requestDto) {
         Objects.requireNonNull(requestDto);
         var request = customerAccountRepository.findById(requestDto.getId());
+
         return request.map(accountRequest -> {
+            if (!Objects.equals(accountRequest.getRequestId(), requestDto.getRequestId())) {
+                throw new BadRequestException("Invalid request id " + requestDto.getRequestId());
+            }
             accountRequest = mapUpdateToEntity(accountRequest,
                     requestDto.toBuilder()
                             .withAddress(updateAddress(accountRequest.getAddress(), requestDto.getAddress()))
-                            .build());
+                            .build()); // Update address entity instead of creating new
             return mapToResponse(submit(accountRequest));
         }).orElseThrow(() -> new IdNotFoundException("Account not found with id " + requestDto.getId()));
     }
@@ -101,7 +110,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
                 .withCreationDateTime(Instant.now())
                 .withUpdateDateTime(Instant.now())
                 .build();
-        log.info("Account creation initiated - request: {}", accountRequest);
+        log.info("Account creation initiated - request: {} ", accountRequest);
         return save(accountRequest);
     }
 
@@ -112,7 +121,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
                 .withState(State.PAUSED)
                 .withUpdateDateTime(Instant.now())
                 .build();
-        log.info("Account creation paused - current request: {}", accountRequest);
+        log.info("Account creation paused - current request: {} ", accountRequest);
         return save(accountRequest);
     }
 
@@ -123,7 +132,7 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
                 .withState(State.UPDATED)
                 .withUpdateDateTime(Instant.now())
                 .build();
-        log.info("Account creation updated with additional info - request: {}", accountRequest);
+        log.info("Account creation updated with additional info request: {} ", accountRequest);
         return save(accountRequest);
     }
 
@@ -143,19 +152,29 @@ public class CustomerAccountServiceImpl implements CustomerAccountService {
     }
 
     private AccountRequest save(final AccountRequest accountRequest) {
+        // Check if the request has already been completed before updating
         if (accountRequest.getId() != null) {
             var currentRequest = customerAccountRepository.findById(accountRequest.getId());
             currentRequest.ifPresentOrElse(
                     request -> {
                         if (request.getStatus().equals(Status.CONFIRMED)) {
                             throw new BadRequestException("Cannot update request. " +
-                                    "Account opening request is already completed for requestId - "
+                                    "Account opening request is already completed for requestId "
                                     + request.getRequestId());
                         }
                     },
-                    () -> log.info("Saving account request for requestId - {}", accountRequest.getRequestId())
+                    () -> log.info("Saving account request for requestId {}", accountRequest.getRequestId())
             );
         }
-        return customerAccountRepository.save(accountRequest);
+
+        try {
+            return customerAccountRepository.save(accountRequest);
+        } catch (DataIntegrityViolationException ex) {
+            Throwable rootCause = ex.getRootCause();
+            if (rootCause != null && rootCause.getMessage().contains("Duplicate entry")) {
+                throw new UniqueConstraintViolationException("Email already exists: " + accountRequest.getEmail());
+            }
+            throw ex; // Re-throw for other integrity violations
+        }
     }
 }
