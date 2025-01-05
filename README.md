@@ -32,16 +32,12 @@ Account Opening Service for Alexa bank - V2.
 - cd into project root directory and run on terminal ` docker-compose up `
 - App should be running on `http://localhost:8080/`. For Swagger UI - `http://localhost:8080/swagger-ui/index.html`. Api
   docs - `http://localhost:8080/v3/api-docs`
-
-## Drop containers AND/OR volumes
-
-- run `docker-compose down -v`
+- To drop containers and volumes - `docker-compose down -v`
 
 ## Testing
 
 To launch your application's tests, run:
 
 - ` .mvn test `
-
 - Postman collection
   link: https://www.postman.com/galactic-meteor-339782/workspace/public-projects/collection/8809012-eb39ff3d-1c89-475c-80ee-e141f103d803?action=share&creator=8809012
