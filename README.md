@@ -16,11 +16,8 @@ Account Opening Service for Alexa bank - V2.
 
 ## How to run Application locally using H2 Database
 
-### Clone or download zip project
-
-Use Maven to build and run the application:
-
-- Enable Annotation Processors for @lombok if using Intellij Idea- Goto
+- Clone or download zip project - git@github.com:princeid/account-opening-service.git
+- Enable Annotation Processors for @lombok. If using Intellij Idea - Goto
   `Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors -> Annotation profile for account-opening-service` ->
   Select `account-opening-service` Check `Obtain processors from project classpath`
 - bash mvn spring-boot:run OR click Run on the `AccountOpeningServiceApplication` if using Intellij
