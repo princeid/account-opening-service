@@ -2,6 +2,7 @@ package com.alexa.account_opening_service.integration;
 
 import com.alexa.account_opening_service.controller.CustomerAccountController;
 import com.alexa.account_opening_service.dto.AccountRequestDTO;
+import com.alexa.account_opening_service.entity.AccountType;
 import com.alexa.account_opening_service.entity.Address;
 import com.alexa.account_opening_service.entity.State;
 import com.alexa.account_opening_service.entity.Status;
@@ -72,6 +73,8 @@ class CustomerAccountIntegrationTest {
                                 .withCity("City 1")
                                 .build()
                 )
+                .withIdDocument("http://location.id.pdf")
+                .withAccountType(AccountType.SAVINGS)
                 .build();
         mockMvc.perform(post("/api/v1/account-opening/request")
                         .contentType(MediaType.APPLICATION_JSON)

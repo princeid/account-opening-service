@@ -25,19 +25,21 @@ public class AccountRequest implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "name cannot be blank")
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     @NotNull
     private Address address;
-    @NotBlank(message = "Date of Birth cannot be blank")
+    @NotBlank(message = "dateOfBirth cannot be blank")
     @Pattern(
             regexp = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\\d{4})$",
-            message = "Date of Birth must be in the format DD-MM-YYYY"
+            message = "dateOfBirth must be in the format DD-MM-YYYY"
     )
     private String dateOfBirth;
+    @NotBlank(message = "idDocument cannot be blank")
     private String idDocument;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
     private Double startingBalance;

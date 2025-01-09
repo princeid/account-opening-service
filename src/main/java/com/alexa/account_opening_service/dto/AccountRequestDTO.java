@@ -19,17 +19,19 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true, setterPrefix = "with")
 public class AccountRequestDTO {
     private Long id;
-    @NotBlank
+    @NotBlank(message = "name cannot be blank")
     private String name;
     @NotNull
     private Address address;
-    @NotBlank(message = "Date of Birth cannot be blank")
+    @NotBlank(message = "dateOfBirth cannot be blank")
     @Pattern(
             regexp = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\\d{4})$",
-            message = "Date of Birth must be in the format DD-MM-YYYY"
+            message = "dateOfBirth must be in the format DD-MM-YYYY"
     )
     private String dateOfBirth;
+    @NotBlank(message = "idDocument cannot be blank")
     private String idDocument;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
     private Double startingBalance;
